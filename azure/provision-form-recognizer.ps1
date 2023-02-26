@@ -34,7 +34,8 @@ az group create `
 az keyvault create `
     --name $KEY_VAULT_NAME `
     --resource-group $RESOURCE_GROUP_NAME `
-    --location $LOCATION
+    --location $LOCATION `
+    --enable-rbac-authorization # Enable RBAC for this key vault
 
 # ------------------------------------------------------------------------------
 # Provision Azure Form Recognizer
