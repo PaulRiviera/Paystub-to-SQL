@@ -58,7 +58,7 @@ namespace PaystubFunction
             }
 
             try {
-                await processor.UploadToSQLAsync(serverName, databaseName, commands, createTables: true);
+                await processor.UploadToSQLAsync(serverName, databaseName, commands);
             } catch (Exception ex) {
                 log.LogError(ex, "Error uploading to SQL");
                 return new BadRequestObjectResult(ex.Message);

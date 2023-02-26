@@ -58,34 +58,16 @@ public class PaystubProcessor
         }
     }
 
-    public async Task UploadToSQLAsync(string serverName, string databaseName, IEnumerable<string> commands, bool createTables = false)
+    public async Task UploadToSQLAsync(string serverName, string databaseName, IEnumerable<string> commands)
     {
         string ConnectionString = $"Server={serverName}.database.windows.net; Authentication=Active Directory Default; Encrypt=True; Database={databaseName}";
 
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             await connection.OpenAsync();
-
-            if (createTables)
+            foreach (var sqlCmd in commands)
             {
-                // First create all tables and relations
-                // This will cause an error if run after tables exist, this is currently a limitation of the AzFormRecognizer.Table.ToSQL library
-                // which will be fixed in a future release, in the meantime, you can comment out the following line and run the program again for new PDFs
-                var createTableCmds = commands.Where(cmd => cmd.Contains("CREATE TABLE")).ToList();
-                foreach (var sqlTableStr in createTableCmds)
-                {
-                    using (var command = new SqlCommand(sqlTableStr, connection))
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-
-            // Insert values into tables
-            var inserValuesCmds = commands.Where(cmd => !cmd.Contains("CREATE TABLE")).ToList();
-            foreach (var sqlTableStr in inserValuesCmds)
-            {
-                using (var command = new SqlCommand(sqlTableStr, connection))
+                using (var command = new SqlCommand(sqlCmd, connection))
                 {
                     command.ExecuteNonQuery();
                 }
